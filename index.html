@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Currency Converter</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+  </head>
+
+  <body>
+    <video autoplay muted id="background-video">
+      <source src="finalbg.mp4" type="video/mp4">
+    </video>
+
+    <div class="input-1">
+      <input class="currency" type="text" placeholder="Currency (From)" style="margin:0;margin-top:70px;">
+      <p style="margin-top:65px;">---To---</p>
+      <input class="currency-2" type="text" placeholder="Currency (To)" style="margin:0;margin-top:70px;">
+    </div>
+
+    <div class="input-2">
+      <input class="amount" type="text" placeholder="Amount" style="margin:0;margin-top:70px;">
+      <p style="margin-top:65px;">➔</p>
+      <input class="result" type="text" placeholder="Result" style="margin:0;margin-top:70px;">
+    </div>
+
+    <div class="three-d">
+      <model-viewer
+        src="bit_coin.glb"
+        alt="bitcoin"
+        style="
+          width:300px;
+          height:200px;
+          background:transparent;
+          float:right;
+          margin-right:80px;
+          margin-top:0;
+          display:inline-block;
+        "
+        auto-rotate
+        camera-controls
+        shadow-intensity="1">
+      </model-viewer>
+    </div>
+
+    <button class="enter">Enter</button>
+
+    <p class="currency-sign" style="color:white;margin-left:400px;">Currency Symbols</p>
+    <p class="cu" style="color:white;margin-left:200px;">
+      EUR: Euro, the official currency of the Eurozone countries in the European Union. <br>
+      GBP: British Pound Sterling, the official currency of the United Kingdom. <br>
+      CAD: Canadian Dollar, the official currency of Canada. <br>
+      PLN: Polish Zloty, the official currency of Poland.
+    </p>
+
+    <script>
+      document.querySelector('.enter').addEventListener('click', async function() {
+        const from = document.querySelector('.currency').value;
+        const to = document.querySelector('.currency-2').value;
+        const amount = document.querySelector('.amount').value;
+        const resultBox = document.querySelector('.result');
+
+        resultBox.value = "";
+
+        try {
+          const response = await fetch('http://localhost:5000/convert', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ from, to, amount })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            resultBox.value = data.error ? JSON.stringify(data.error) : "Error converting.";
+          } else if (data.result !== undefined) {
+            resultBox.value = data.result;
+          } else {
+            resultBox.value = "Unexpected response.";
+          }
+        } catch (err) {
+          console.error(err);
+          resultBox.value = "Could not connect to backend.";
+        }
+      });
+    </script>
+
+  </body>
+</html>
