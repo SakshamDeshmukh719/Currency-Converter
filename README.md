@@ -108,13 +108,5 @@ CSV-based currency list allows easy extension
 
 Designed to be modular and scalable
 
-If you want, I can:
 
-tighten this into one-page README
-
-add team member credits section
-
-add screenshots section
-
-or write a professional academic-submission version
 
